@@ -12,6 +12,9 @@ public class Blackjack {
         //Create a deck for the player
         Deck playerDeck = new Deck();
         
+        //Create a deck for second player
+        Deck playerDeck2 = new Deck();
+        
         //Create a deck for the dealer 
         Deck dealerDeck = new Deck();
         
