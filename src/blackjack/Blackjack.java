@@ -32,6 +32,8 @@ public class Blackjack {
                 break;
             }
             
+            boolean endRound = false;
+            
             //Start dealing cards 
             playerDeck.draw(playingDeck);
             playerDeck.draw(playingDeck);
@@ -42,12 +44,13 @@ public class Blackjack {
             while(true){
                 
                 //Player's hand
-                System.out.println("Your hand: ");
+                System.out.print("Your hand: ");
                 System.out.println(playerDeck.toString());
                 System.out.println("Your deck has a value of: " + playerDeck.cardsValue());
                 
                 //Dealer's hand
-                System.out.println("Dealer hand: " + dealerDeck.getCard(0).toString() + " and [Hidden]");
+                System.out.print("Dealer hand: ");
+                System.out.println(dealerDeck.getCard(0).toString() + " and [Hidden]");               
                 
                 System.out.println("Would you like to Hit(1) or Stand(2)");
                 int response = userInput.nextInt();
@@ -58,11 +61,62 @@ public class Blackjack {
                         if(playerDeck.cardsValue() > 21){
                             System.out.println("Busted ! Your hand is valued at: " + playerDeck.cardsValue());
                             playerMoney -= playerBet;
-                            
+                            endRound = true;
+                            break;
                         }
                     
                 }
+                
+                if(response == 2){
+                    break;
+                }             
             }
+            
+            //Revealing Dealer's cards
+            System.out.println("Dealer cards; " + dealerDeck.toString());
+            //Determine if dealer has more points than player
+            if(dealerDeck.cardsValue() > playerDeck.cardsValue() && endRound == false){
+                    System.out.println("Dealer beats you !");
+                    playerMoney -= playerBet;
+                    endRound = true;
+            }
+            
+             //Dealer draws at 16 and stand at 17
+            while((dealerDeck.cardsValue() < 17) && endRound == false){
+                dealerDeck.draw(playingDeck);
+                System.out.println("Dealers draws: " + dealerDeck.getCard(dealerDeck.deckSize()-1).toString());
+            }
+            
+            //Display total value of dealers hand
+            System.out.println("Dealer's hand has a value of: " + dealerDeck.cardsValue());
+            //Determine if dealer is busted
+            if((dealerDeck.cardsValue() > 21) && endRound == false){
+                System.out.println("Dealer busted ! You win !");
+                playerMoney += playerBet;
+                endRound = true;
+            }
+            
+            //Determine if it's a push
+            if((playerDeck.cardsValue() == dealerDeck.cardsValue()) && endRound == false){
+                System.out.println("Push!");
+                endRound = true;
+            }
+            
+            if((playerDeck.cardsValue() > dealerDeck.cardsValue()) && endRound == false){
+                System.out.println("You won this hand !");
+                playerMoney += playerBet;
+                endRound = true;
+            }
+            else if(endRound == false){
+                System.out.println("You lost this hand.");
+                playerMoney -= playerBet;
+                endRound = true;
+            }
+            
+            //Putting cards back into the deck
+            playerDeck.moveAllToDeck(playingDeck);
+            dealerDeck.moveAllToDeck(playingDeck);
+            System.out.println("End of hand.");
         }
        //Game over
         System.out.println("Game is over, you lost all money.");
